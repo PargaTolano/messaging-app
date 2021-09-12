@@ -2,16 +2,23 @@ package com.parga.messagingapp.chat;
 
 import com.parga.messagingapp.message.Message;
 import com.parga.messagingapp.user.User;
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @Document(collection = "chats")
+@TypeAlias("chat")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Chat {
 
     @Id
+    @Setter(AccessLevel.NONE)
     private String id;
 
     @DBRef(lazy = true)
@@ -19,24 +26,4 @@ public class Chat {
 
     @DBRef(lazy = true)
     private List<Message> messages;
-
-    public String getId() {
-        return id;
-    }
-
-    public List<User> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(List<User> participants) {
-        this.participants = participants;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
 }

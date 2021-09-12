@@ -2,6 +2,7 @@ package com.parga.messagingapp.message;
 
 import com.parga.messagingapp.chat.Chat;
 import com.parga.messagingapp.user.User;
+import lombok.*;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -9,10 +10,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
 
-@Document()
+@Document
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message {
 
     @Id
+    @Setter(AccessLevel.NONE)
     private String id;
 
     private String text;
@@ -29,49 +34,5 @@ public class Message {
 
     public Message(String text) {
         this.text = text;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public ZonedDateTime getTime() {
-        return time;
-    }
-
-    public void setTime(ZonedDateTime time) {
-        this.time = time;
-    }
-
-    public Binary getImage() {
-        return image;
-    }
-
-    public void setImage(Binary image) {
-        this.image = image;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
     }
 }

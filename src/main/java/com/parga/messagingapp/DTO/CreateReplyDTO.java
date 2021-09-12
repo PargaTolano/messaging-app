@@ -7,4 +7,8 @@ public class CreateReplyDTO extends CreateMessageDTO{
     public String getOwnerId() {
         return ownerId;
     }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
 }

@@ -1,5 +1,6 @@
 package com.parga.messagingapp.user;
 
+import com.parga.messagingapp.DTO.UpdateUserDTO;
 import com.parga.messagingapp.DTO.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,15 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins="*")
 @RequestMapping(path="api/v1/user")
 public class UserController {
 
-    private final UserService userService;
-
     @Autowired
-    public UserController( UserService userService){
-        this.userService = userService;
-    }
+    private UserService userService;
 
     @GetMapping()
     public ResponseEntity<ResponseDTO> getUsers(
@@ -65,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<ResponseDTO> updateUser(@PathVariable String id, @RequestBody User user){
+    public ResponseEntity<ResponseDTO> updateUser(@PathVariable String id, @RequestBody UpdateUserDTO user){
         try{
             User updated = userService.updateUser(id,user);
             return new ResponseEntity<ResponseDTO>(new ResponseDTO("Updated user successfully", updated), HttpStatus.OK);
