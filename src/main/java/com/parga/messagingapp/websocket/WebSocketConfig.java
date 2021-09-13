@@ -1,4 +1,4 @@
-package com.parga.messagingapp.websocket.config;
+package com.parga.messagingapp.websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,16 +12,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/user/queues");
         config.setApplicationDestinationPrefixes("/app");
+        config.setUserDestinationPrefix("/secured/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/gs-guide-websocket")
-                .setAllowedOriginPatterns("*")
-                .setAllowedOrigins("*")
+        registry.addEndpoint("/websocket-message-app")
+                .setAllowedOrigins("http://localhost:3000")
                 .withSockJS();
+        registry.addEndpoint("/secured/room").withSockJS();
     }
 
 }
