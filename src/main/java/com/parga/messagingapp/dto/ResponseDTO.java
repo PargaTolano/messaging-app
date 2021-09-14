@@ -1,4 +1,4 @@
-package com.parga.messagingapp.DTO;
+package com.parga.messagingapp.dto;
 
 public class ResponseDTO {
 

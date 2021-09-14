@@ -1,7 +1,6 @@
-package com.parga.messagingapp.DTO;
+package com.parga.messagingapp.dto;
 
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 
 @Data
 public class UpdateUserDTO {

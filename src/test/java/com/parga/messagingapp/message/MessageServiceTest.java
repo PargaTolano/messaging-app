@@ -1,11 +1,9 @@
 package com.parga.messagingapp.message;
 
-import com.parga.messagingapp.DTO.CreateMessageDTO;
-import com.parga.messagingapp.chat.Chat;
-import com.parga.messagingapp.chat.ChatRepository;
-import com.parga.messagingapp.user.User;
-import com.parga.messagingapp.user.UserRepository;
-import org.junit.jupiter.api.*;
+import com.parga.messagingapp.dto.OutMessageDTO;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 @ExtendWith(MockitoExtension.class)
 public class MessageServiceTest {
@@ -25,206 +23,124 @@ public class MessageServiceTest {
     @Mock
     MessageRepository messageRepository;
 
-    @Mock
-    UserRepository userRepository;
-
-    @Mock
-    ChatRepository chatRepository;
-
     @Autowired
     @InjectMocks
     private MessageService messageService;
 
-    private User u1;
-    private User u2;
+    @Nested
+    class CreateMessageTest{
 
-    private Chat c;
+        @Test
+        public void whenCreateNewMessageWithText_shouldBeOk(){
 
-    private Message m1;
-    private Message m2;
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            df.setTimeZone(tz);
+            String isoDateString = df.format(new Date());
 
-    List<Message> messageList;
+            OutMessageDTO msgData =
+                    OutMessageDTO.builder()
+                            .from("From")
+                            .to("To")
+                            .content("Content")
+                            .time(isoDateString).build();
 
-    @BeforeEach
-    public void setUp(){
+            Message message;
 
+            try{
+                message = messageService.createMessage(msgData, null);
+            } catch (Exception e) {
+                message = null;
+            }
 
-        u1 = new User(null, "test-user1", "t1p", null);
-        u2 = new User(null, "test-user2", "t2p", null);
-
-        when(userRepository.insert(any(User.class))).thenReturn(u1);
-
-        User t1 = userRepository.insert(u1);
-
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-        System.out.println("Inserted User Value: " + t1);
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-
-        List<User> users = List.of(u1,u2);
-
-        userRepository.insert(users);
-
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-        System.out.println(messageRepository);
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-        System.out.println(userRepository);
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-        System.out.println(chatRepository);
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-
-        m1 = new Message();
-        m2 = new Message();
-
-        m1.setText("Test text1");
-        m2.setText("Test text2");
-
-        messageList = List.of(m1, m2);
-    }
-
-    @AfterEach
-    public void tearDown(){
-        m1 = m2 = null;
-        messageList = null;
-    }
-
-    @Test
-    @DisplayName("Test Should Pass if a new Message is created with text and info")
-    public void shouldCreateNewMessageWithText() {
-        CreateMessageDTO createDTONoFile = new CreateMessageDTO();
-        createDTONoFile.setUserId("61347dc5cd692a7fb1a5eb0b");
-        createDTONoFile.setChatId("6135b7e345f4b613e2e69a71");
-        createDTONoFile.setText("Test Just Text");
-
-        Message message;
-
-        try{
-            message = messageService.createMessage(createDTONoFile, null);
-        } catch (Exception e) {
-            System.out.println("#########################################");
-            System.out.println(e.getMessage());
-            System.out.println("#########################################");
-            message = null;
+            Assertions.assertTrue(message != null);
         }
 
-        Assertions.assertTrue(message != null);
-    }
+        @Test
+        public void whenCreateNewMessageWithFile_shouldBeOk(){
 
-    @Test
-    @DisplayName("Test Should Pass if a new Message is created with a file and info")
-    public void shouldCreateNewMessageWithFile() {
-        CreateMessageDTO createDTONoFile = new CreateMessageDTO();
-        createDTONoFile.setUserId("61347dc5cd692a7fb1a5eb0b");
-        createDTONoFile.setChatId("6135b7e345f4b613e2e69a71");
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            df.setTimeZone(tz);
+            String isoDateString = df.format(new Date());
 
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "file",
-                "file.txt",
-                MediaType.TEXT_PLAIN_VALUE,
-                "Hello World!".getBytes());
-        Message message;
+            OutMessageDTO msgData =
+                    OutMessageDTO.builder().from("From").to("To").time(isoDateString).build();
 
-        try{
-            message = messageService.createMessage(createDTONoFile, mockFile);
-        } catch (Exception e) {
-            System.out.println("#########################################");
-            System.out.println(e.getMessage());
-            System.out.println("#########################################");
-            message = null;
+            MockMultipartFile mockFile = new MockMultipartFile(
+                    "file",
+                    "file.txt",
+                    MediaType.TEXT_PLAIN_VALUE,
+                    "Hello World!".getBytes());
+            Message message;
+
+            try{
+                message = messageService.createMessage(msgData, mockFile);
+            } catch (Exception e) {
+                message = null;
+            }
+
+            Assertions.assertTrue(message != null);
         }
 
-        Assertions.assertTrue(message != null);
+        @Test
+        public void whenCreateNewMessageWithTextAndFile_shouldBeOk(){
+
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            df.setTimeZone(tz);
+            String isoDateString = df.format(new Date());
+
+            OutMessageDTO msgData =
+                    OutMessageDTO.builder()
+                            .from("From")
+                            .to("To")
+                            .content("Content")
+                            .time(isoDateString).build();
+
+            MockMultipartFile mockFile = new MockMultipartFile(
+                    "file",
+                    "file.txt",
+                    MediaType.TEXT_PLAIN_VALUE,
+                    "Hello World!".getBytes());
+
+            Message message;
+
+            try{
+                message = messageService.createMessage(msgData, mockFile);
+            } catch (Exception e) {
+                message = null;
+            }
+
+            Assertions.assertTrue(message != null);
+        }
+
+        @Test
+        public void whenCreateNewMessageWitNoTextAndNoFile_shouldThrowFieldNotFoundException(){
+
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            df.setTimeZone(tz);
+            String isoDateString = df.format(new Date());
+
+            OutMessageDTO msgData =
+                    OutMessageDTO.builder().from("From").to("To").time(isoDateString).build();
+
+            MockMultipartFile mockFile = new MockMultipartFile(
+                    "file",
+                    "file.txt",
+                    MediaType.TEXT_PLAIN_VALUE,
+                    "Hello World!".getBytes());
+            Message message;
+
+            try{
+                message = messageService.createMessage(msgData, mockFile);
+            } catch (Exception e) {
+                message = null;
+            }
+
+            Assertions.assertTrue(message != null);
+        }
     }
 
-    @Test
-    @DisplayName("Test Should Pass if a new Message is created with text, info, and a file")
-    public void shouldCreateNewMessageWithTextAndFile() {
-        CreateMessageDTO createDTONoFile = new CreateMessageDTO();
-        createDTONoFile.setUserId("61347dc5cd692a7fb1a5eb0b");
-        createDTONoFile.setChatId("6135b7e345f4b613e2e69a71");
-        createDTONoFile.setText("Test With Text and File");
-
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "file",
-                "file.txt",
-                MediaType.TEXT_PLAIN_VALUE,
-                "Hello World!".getBytes());
-
-        Message message;
-
-        try{
-            message = messageService.createMessage(createDTONoFile, mockFile);
-        } catch (Exception e) {
-            System.out.println("#########################################");
-            System.out.println(e.getMessage());
-            System.out.println("#########################################");
-            message = null;        }
-
-        Assertions.assertTrue(message != null);
-
-        messageService.deleteReply(message.getId());
-    }
-
-//    @Test
-//    @DisplayName("Test Should Pass if a new Message is not created with no text and no file")
-//    public void shouldNotCreateNewMessageWithOutTextAndFile(){
-//        CreateMessageDTO createDTONoFile = new CreateMessageDTO();
-//        createDTONoFile.setUserId("61347dc5cd692a7fb1a5eb0b");
-//        createDTONoFile.setChatId("6135b7e345f4b613e2e69a71");
-//
-//        Message message;
-//
-//        try{
-//            message = messageService.createMessage(createDTONoFile, null);
-//        } catch (Exception e) {
-//            System.out.println("#########################################");
-//            System.out.println(e.getMessage());
-//            System.out.println("#########################################");
-//            message = null;        }
-//
-//        Assertions.assertTrue(message == null);
-//    }
-//
-//    @Test
-//    @DisplayName("Test Should Pass if a new Message is not created with no chatId")
-//    public void shouldNotCreateNewMessageWithOutChatId(){
-//        CreateMessageDTO createDTONoFile = new CreateMessageDTO();
-//        createDTONoFile.setUserId("61347dc5cd692a7fb1a5eb0b");
-//        createDTONoFile.setText("Test");
-//
-//        Message message;
-//
-//        try{
-//            message = messageService.createMessage(createDTONoFile, null);
-//        } catch (Exception e) {
-//            System.out.println("#########################################");
-//            System.out.println(e.getMessage());
-//            System.out.println("#########################################");
-//            message = null;        }
-//
-//        Assertions.assertTrue(message == null);
-//    }
-//
-//    @Test
-//    @DisplayName("Test Should Pass if a new Message is not created with no userId")
-//    public void shouldNotCreateNewMessageWithOutUserId(){
-//        CreateMessageDTO createDTONoFile = new CreateMessageDTO();
-//        createDTONoFile.setChatId("6135b7e345f4b613e2e69a71");
-//        createDTONoFile.setText("Test");
-//
-//        Message message;
-//
-//        try{
-//            message = messageService.createMessage(createDTONoFile, null);
-//        } catch (Exception e) {
-//            System.out.println("#########################################");
-//            System.out.println(e.getMessage());
-//            System.out.println("#########################################");
-//            message = null;        }
-//
-//        Assertions.assertTrue(message == null);
-//    }
 }

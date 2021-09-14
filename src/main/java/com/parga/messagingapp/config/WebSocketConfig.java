@@ -1,28 +1,32 @@
-package com.parga.messagingapp.websocket;
+package com.parga.messagingapp.config;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import static com.parga.messagingapp.Constants.*;
+
 @Configuration
 @EnableWebSocketMessageBroker
+@ComponentScan("com.parga.messagingapp.websocket")
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/user/queues");
+        config.enableSimpleBroker(SECURED_CHAT_HISTORY, SECURED_CHAT_SPECIFIC_USER, "/topic");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/secured/user");
+
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket-message-app")
-                .setAllowedOrigins("http://localhost:3000")
-                .withSockJS();
-        registry.addEndpoint("/secured/room").withSockJS();
+        registry.addEndpoint(SECURED_CHAT_ROOM).setAllowedOrigins("http://localhost:3000").withSockJS();
+        registry.addEndpoint(SECURED_CHAT).setAllowedOrigins("http://localhost:3000").withSockJS();
+        registry.addEndpoint("/test-ws").setAllowedOrigins("http://localhost:3000").withSockJS();
     }
 
 }

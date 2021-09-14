@@ -1,7 +1,7 @@
 package com.parga.messagingapp.user;
 
 import com.google.common.collect.Lists;
-import com.parga.messagingapp.DTO.UpdateUserDTO;
+import com.parga.messagingapp.dto.UpdateUserDTO;
 import com.parga.messagingapp.exception.FieldNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

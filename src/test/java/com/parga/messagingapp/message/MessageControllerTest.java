@@ -14,9 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//TODO add a beforeEach and AfterEach Method to add potential dependencies
-//TODO use gson to parse and use response data
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class MessageControllerTest {
@@ -115,77 +112,4 @@ class MessageControllerTest {
         }
     }
 
-    @Nested
-    class CreateReplyTest{
-        @Test
-        void whenCreateNewReplyMessageWithTextChatIdAndUserId_shouldBeOk() throws Exception{
-            MockMultipartHttpServletRequestBuilder multipartRequest =
-                    MockMvcRequestBuilders.multipart("/api/v1/message/create-reply");
-
-            mockMvc.perform(
-                            multipartRequest
-                                    .param("text","gatito")
-                                    .param("chatId", "6135b7e345f4b613e2e69a71")
-                                    .param("userId", "61347dc5cd692a7fb1a5eb0b"))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        void whenCreateNewReplyMessageWithTextFileChatIdAndUserId_shouldBeOk() throws Exception{
-            MockMultipartFile file = new MockMultipartFile("file", "Hello.txt", MediaType.TEXT_PLAIN_VALUE, "HelloWorld!".getBytes());
-
-            MockMultipartHttpServletRequestBuilder multipartRequest =
-                    MockMvcRequestBuilders.multipart("/api/v1/message/create-reply");
-
-            mockMvc.perform(
-                            multipartRequest
-                                    .file(file)
-                                    .param("text","gatito")
-                                    .param("chatId", "6135b7e345f4b613e2e69a71")
-                                    .param("userId", "61347dc5cd692a7fb1a5eb0b"))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        void whenCreateNewReplyMessageWithTextChatId_shouldBe5xx() throws Exception{
-            MockMultipartHttpServletRequestBuilder multipartRequest =
-                    MockMvcRequestBuilders.multipart("/api/v1/message/create-reply");
-
-            mockMvc.perform(
-                            multipartRequest
-                                    .param("text","gatito")
-                                    .param("chatId", "6135b7e345f4b613e2e69a71"))
-                    .andDo(print())
-                    .andExpect(status().is5xxServerError());
-        }
-
-        @Test
-        void whenCreateNewReplyMessageWithTextUserId_shouldBe5xx() throws Exception{
-            MockMultipartHttpServletRequestBuilder multipartRequest =
-                MockMvcRequestBuilders.multipart("/api/v1/message/create-reply");
-
-
-            mockMvc.perform(
-                            multipartRequest
-                                    .param("text","gatito")
-                                    .param("userId", "61347dc5cd692a7fb1a5eb0b"))
-                    .andDo(print())
-                    .andExpect(status().is5xxServerError());
-        }
-
-        @Test
-        void whenCreateNewReplyMessageWithChatIdAndUserId_shouldBe5xx() throws Exception{
-            MockMultipartHttpServletRequestBuilder multipartRequest =
-                    MockMvcRequestBuilders.multipart("/api/v1/message/create-reply");
-
-            mockMvc.perform(
-                            multipartRequest
-                                    .param("chatId", "6135b7e345f4b613e2e69a71")
-                                    .param("userId", "61347dc5cd692a7fb1a5eb0b"))
-                    .andDo(print())
-                    .andExpect(status().is5xxServerError());
-        }
-    }
 }

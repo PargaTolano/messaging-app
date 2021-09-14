@@ -1,8 +1,7 @@
 package com.parga.messagingapp.user;
 
-import com.parga.messagingapp.chat.Chat;
+import com.parga.messagingapp.message.Message;
 import lombok.*;
-import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -29,5 +28,5 @@ public class User {
     private String      password;
 
     @DBRef(lazy = true)
-    private List<Chat> chats;
+    private List<Message> messages;
 }

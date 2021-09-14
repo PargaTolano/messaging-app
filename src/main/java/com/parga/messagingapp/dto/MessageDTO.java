@@ -1,4 +1,4 @@
-package com.parga.messagingapp.DTO;
+package com.parga.messagingapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientSocketMessageDTO {
-    private String content;
-    private String time;
+public class MessageDTO {
     private String from;
+    private String to;
+    private String content;
 }

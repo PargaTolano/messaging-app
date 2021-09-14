@@ -1,6 +1,5 @@
 package com.parga.messagingapp.message;
 
-import com.parga.messagingapp.chat.Chat;
 import com.parga.messagingapp.user.User;
 import lombok.*;
 import org.bson.types.Binary;
@@ -20,19 +19,14 @@ public class Message {
     @Setter(AccessLevel.NONE)
     private String id;
 
-    private String text;
-
-    private ZonedDateTime time;
-
-    private Binary image;
-
-    @DBRef(lazy = true)
-    private User owner;
+    private String from;
+    private String to;
+    private String content;
+    private String time;
 
     @DBRef(lazy = true)
-    private Chat chat;
+    private User sender;
 
-    public Message(String text) {
-        this.text = text;
-    }
+    @DBRef(lazy = true)
+    private User receiver;
 }

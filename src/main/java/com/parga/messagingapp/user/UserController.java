@@ -1,7 +1,8 @@
 package com.parga.messagingapp.user;
 
-import com.parga.messagingapp.DTO.UpdateUserDTO;
-import com.parga.messagingapp.DTO.ResponseDTO;
+import com.parga.messagingapp.dto.UpdateUserDTO;
+import com.parga.messagingapp.dto.ResponseDTO;
+import com.parga.messagingapp.exception.FieldNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins="*")
-@RequestMapping(path="api/v1/user")
+@RequestMapping("api/v1/user")
 public class UserController {
 
     @Autowired
@@ -21,10 +21,10 @@ public class UserController {
     public ResponseEntity<ResponseDTO> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size){
-        try{
+        try {
             List users = userService.getUsers(page, size);
             return new ResponseEntity<ResponseDTO>(new ResponseDTO("Users retrieved successfully", users), HttpStatus.OK);
-        } catch (Exception e){
+        }  catch (Exception e){
             return new ResponseEntity<ResponseDTO>(new ResponseDTO("", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -33,9 +33,11 @@ public class UserController {
     public ResponseEntity<ResponseDTO>  getUser(@PathVariable String id){
         try{
             User user = userService.getUserById(id);
-            return new ResponseEntity<ResponseDTO>(new ResponseDTO("User retrieved successfully", user), HttpStatus.OK);
+            return new ResponseEntity(new ResponseDTO("User retrieved successfully", user), HttpStatus.OK);
+        } catch ( FieldNotFoundException e){
+            return new ResponseEntity(new ResponseDTO(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         } catch (Exception e){
-            return new ResponseEntity<ResponseDTO>(new ResponseDTO("", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ResponseDTO("", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
